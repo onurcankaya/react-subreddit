@@ -33,6 +33,15 @@ class App extends Component {
     }
   }
 
+  onDismiss = id => {
+    const { list } = this.state
+    const updatedList = list.filter(item => item.objectID !== id)
+
+    this.setState({
+      list: updatedList,
+    })
+  }
+
   render() {
     const title = 'r/todayilearned'
     const { list } = this.state
@@ -50,6 +59,14 @@ class App extends Component {
             <div>{item.author}</div>
             <div>{item.votes}</div>
             <div>{item.num_comments}</div>
+            <div>
+              <button
+                onClick={() => this.onDismiss(item.objectID)}
+                type="button"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         ))}
       </div>
