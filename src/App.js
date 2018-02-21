@@ -28,10 +28,17 @@ const list = [
 // const isSearched = searchTerm => item =>
 //   item.title.toLowerCase().includes(searchTerm.toLowerCase())
 
-const Search = ({ value, onChange }) => (
+const Search = ({ value, onChange, children }) => (
   <form>
+    {children}
     <input type="text" value={value} onChange={onChange} />
   </form>
+)
+
+const Button = ({ onClick, children, className = '' }) => (
+  <button type="button" className={className} onClick={onClick}>
+    {children}
+  </button>
 )
 
 const Table = ({ list, searchTerm, onDismiss }) => (
@@ -51,9 +58,7 @@ const Table = ({ list, searchTerm, onDismiss }) => (
           <div>{item.votes}</div>
           <div>{item.num_comments}</div>
           <div>
-            <button onClick={() => this.onDismiss(item.objectID)} type="button">
-              Dismiss
-            </button>
+            <Button onClick={() => onDismiss(item.objectID)}>Dismiss</Button>
           </div>
         </div>
       ))}
@@ -88,7 +93,9 @@ class App extends Component {
 
     return (
       <div className="App">
-        <Search value={searchTerm} onChange={this.onSearchTextChange} />
+        <Search value={searchTerm} onChange={this.onSearchTextChange}>
+          Search
+        </Search>
         <Table list={list} searchTerm={searchTerm} onDismiss={this.onDismiss} />
       </div>
     )
