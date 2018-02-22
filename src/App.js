@@ -28,10 +28,15 @@ const list = [
 // const isSearched = searchTerm => item =>
 //   item.title.toLowerCase().includes(searchTerm.toLowerCase())
 
-const Search = ({ value, onChange, children }) => (
+const Search = ({ value, onChange, children, placeholder }) => (
   <form>
     {children}
-    <input type="text" value={value} onChange={onChange} />
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+    />
   </form>
 )
 
@@ -42,23 +47,28 @@ const Button = ({ onClick, children, className = '' }) => (
 )
 
 const Table = ({ list, searchTerm, onDismiss }) => (
-  <div>
+  <div className="table">
     {list
       .filter(item =>
         item.title.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .map(item => (
-        <div key={item.objectID}>
-          <div>
+        <div key={item.objectID} className="table-row">
+          <div style={{ width: '70%' }}>
             <a href={item.url} target="_blank">
               {item.title}
             </a>
           </div>
-          <div>{item.author}</div>
-          <div>{item.votes}</div>
-          <div>{item.num_comments}</div>
-          <div>
-            <Button onClick={() => onDismiss(item.objectID)}>Dismiss</Button>
+          <div style={{ width: '10%' }}>{item.author}</div>
+          <div style={{ width: '5%' }}>{item.votes}</div>
+          <div style={{ width: '5%' }}>{item.num_comments}</div>
+          <div style={{ width: '10%' }}>
+            <Button
+              onClick={() => onDismiss(item.objectID)}
+              className="button-inline"
+            >
+              Dismiss
+            </Button>
           </div>
         </div>
       ))}
@@ -92,10 +102,14 @@ class App extends Component {
     const { list, searchTerm } = this.state
 
     return (
-      <div className="App">
-        <Search value={searchTerm} onChange={this.onSearchTextChange}>
-          Search
-        </Search>
+      <div className="page">
+        <div className="interactions">
+          <Search
+            value={searchTerm}
+            onChange={this.onSearchTextChange}
+            placeholder="Search..."
+          />
+        </div>
         <Table list={list} searchTerm={searchTerm} onDismiss={this.onDismiss} />
       </div>
     )
