@@ -1,28 +1,10 @@
 import React, { Component } from 'react'
 import './App.css'
 
-const list = [
-  {
-    title:
-      'TIL that Viagra can help make flowers stand straight up for a week past their natural lifespan',
-    url:
-      'https://www.reddit.com/r/todayilearned/comments/7xkrkc/til_that_viagra_can_help_make_flowers_stand/',
-    author: 'ProbablyMisinformed',
-    votes: 2809,
-    num_comments: 58,
-    objectID: 0,
-  },
-  {
-    title:
-      'TIL that Norway has the won the most gold medals in winter Olympic history and is the only nation to have at least 100 medals of each gold, silver, and bronze',
-    url:
-      'https://www.reddit.com/r/todayilearned/comments/7xi73j/til_that_norway_has_the_won_the_most_gold_medals/',
-    author: 'ohineedascreenname',
-    votes: 3034,
-    num_comments: 126,
-    objectID: 1,
-  },
-]
+const DEFAULT_QUERY = 'programming'
+const PATH_BASE = 'http://www.reddit.com/api/'
+const PATH_SEARCH = 'subreddits_by_topic.json'
+const PARAM_SEARCH = 'query='
 
 // Higher Order Function
 // const isSearched = searchTerm => item =>
@@ -50,21 +32,19 @@ const Table = ({ list, searchTerm, onDismiss }) => (
   <div className="table">
     {list
       .filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        item.path.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .map(item => (
-        <div key={item.objectID} className="table-row">
+        <div key={item.path} className="table-row">
           <div style={{ width: '70%' }}>
-            <a href={item.url} target="_blank">
-              {item.title}
+            <a href={item.name} target="_blank">
+              {item.name}
             </a>
           </div>
-          <div style={{ width: '10%' }}>{item.author}</div>
-          <div style={{ width: '5%' }}>{item.votes}</div>
-          <div style={{ width: '5%' }}>{item.num_comments}</div>
+          <div style={{ width: '10%' }}>{item.path}</div>
           <div style={{ width: '10%' }}>
             <Button
-              onClick={() => onDismiss(item.objectID)}
+              onClick={() => onDismiss(item.path)}
               className="button-inline"
             >
               Dismiss
@@ -80,8 +60,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      list,
-      searchTerm: '',
+      result: null,
+      searchTerm: DEFAULT_QUERY,
     }
   }
 
@@ -98,8 +78,33 @@ class App extends Component {
     })
   }
 
+  setSearchSubreddits = result => {
+    this.setState({ result })
+    console.log(result)
+  }
+
+  fetchSearchSubreddits = searchTerm => {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result.data)
+        return this.setSearchSubreddits(result)
+      })
+      .catch(e => e)
+  }
+
+  componentDidMount() {
+    const { searchTerm } = this.state
+    this.fetchSearchSubreddits(searchTerm)
+    console.log(searchTerm)
+  }
+
   render() {
-    const { list, searchTerm } = this.state
+    const { result, searchTerm } = this.state
+
+    if (!result) {
+      return null
+    }
 
     return (
       <div className="page">
@@ -110,7 +115,11 @@ class App extends Component {
             placeholder="Search..."
           />
         </div>
-        <Table list={list} searchTerm={searchTerm} onDismiss={this.onDismiss} />
+        <Table
+          list={result}
+          searchTerm={searchTerm}
+          onDismiss={this.onDismiss}
+        />
       </div>
     )
   }
