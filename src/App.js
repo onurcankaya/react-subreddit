@@ -44,7 +44,7 @@ const Table = ({ list, searchTerm, onDismiss }) => (
           <div style={{ width: '10%' }}>{item.path}</div>
           <div style={{ width: '10%' }}>
             <Button
-              onClick={() => onDismiss(item.path)}
+              onClick={() => onDismiss(item.name)}
               className="button-inline"
             >
               Dismiss
@@ -70,11 +70,11 @@ class App extends Component {
   }
 
   onDismiss = id => {
-    const { list } = this.state
-    const updatedList = list.filter(item => item.objectID !== id)
+    const { result } = this.state
+    const updatedList = result.filter(item => item.name !== id)
 
     this.setState({
-      list: updatedList,
+      result: updatedList,
     })
   }
 
@@ -115,11 +115,13 @@ class App extends Component {
             placeholder="Search..."
           />
         </div>
-        <Table
-          list={result}
-          searchTerm={searchTerm}
-          onDismiss={this.onDismiss}
-        />
+        {result && (
+          <Table
+            list={result}
+            searchTerm={searchTerm}
+            onDismiss={this.onDismiss}
+          />
+        )}
       </div>
     )
   }
