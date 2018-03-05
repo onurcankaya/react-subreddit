@@ -10,15 +10,15 @@ const PARAM_SEARCH = 'query='
 // const isSearched = searchTerm => item =>
 //   item.title.toLowerCase().includes(searchTerm.toLowerCase())
 
-const Search = ({ value, onChange, children, placeholder }) => (
-  <form>
-    {children}
+const Search = ({ value, onChange, children, placeholder, onSearchSubmit }) => (
+  <form onClick={onSearchSubmit}>
     <input
       type="text"
       value={value}
       onChange={onChange}
       placeholder={placeholder}
     />
+    <button type="submit">{children}</button>
   </form>
 )
 
@@ -28,30 +28,26 @@ const Button = ({ onClick, children, className = '' }) => (
   </button>
 )
 
-const Table = ({ list, searchTerm, onDismiss }) => (
+const Table = ({ list, onDismiss }) => (
   <div className="table">
-    {list
-      .filter(item =>
-        item.path.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .map(item => (
-        <div key={item.path} className="table-row">
-          <div style={{ width: '70%' }}>
-            <a href={item.name} target="_blank">
-              {item.name}
-            </a>
-          </div>
-          <div style={{ width: '10%' }}>{item.path}</div>
-          <div style={{ width: '10%' }}>
-            <Button
-              onClick={() => onDismiss(item.name)}
-              className="button-inline"
-            >
-              Dismiss
-            </Button>
-          </div>
+    {list.map(item => (
+      <div key={item.path} className="table-row">
+        <div style={{ width: '70%' }}>
+          <a href={item.name} target="_blank">
+            {item.name}
+          </a>
         </div>
-      ))}
+        <div style={{ width: '10%' }}>{item.path}</div>
+        <div style={{ width: '10%' }}>
+          <Button
+            onClick={() => onDismiss(item.name)}
+            className="button-inline"
+          >
+            Dismiss
+          </Button>
+        </div>
+      </div>
+    ))}
   </div>
 )
 
@@ -67,6 +63,11 @@ class App extends Component {
 
   onSearchTextChange = e => {
     this.setState({ searchTerm: e.target.value })
+  }
+
+  onSearchSubmit = () => {
+    const { searchTerm } = this.state
+    this.fetchSearchSubreddits(searchTerm)
   }
 
   onDismiss = id => {
@@ -113,15 +114,12 @@ class App extends Component {
             value={searchTerm}
             onChange={this.onSearchTextChange}
             placeholder="Search..."
-          />
+            onSearchSubmit={this.onSearchSubmit}
+          >
+            Search
+          </Search>
         </div>
-        {result && (
-          <Table
-            list={result}
-            searchTerm={searchTerm}
-            onDismiss={this.onDismiss}
-          />
-        )}
+        {result && <Table list={result} onDismiss={this.onDismiss} />}
       </div>
     )
   }
