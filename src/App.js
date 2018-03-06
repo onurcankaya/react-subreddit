@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import './App.css'
 
-const DEFAULT_QUERY = 'programming'
-const PATH_BASE = 'http://www.reddit.com/api/'
-const PATH_SEARCH = 'subreddits_by_topic.json'
-const PARAM_SEARCH = 'query='
+const PATH_BASE = 'http://www.reddit.com/r/'
+const DEFAULT_SUBREDDIT = 'programming'
+const PATH_FORMAT = '.json'
 
 // Higher Order Function
 // const isSearched = searchTerm => item =>
@@ -31,10 +30,10 @@ const Button = ({ onClick, children, className = '' }) => (
 const Table = ({ list, onDismiss }) => (
   <div className="table">
     {list.map(item => (
-      <div key={item.path} className="table-row">
+      <div key={item.data.id} className="table-row">
         <div style={{ width: '70%' }}>
-          <a href={item.name} target="_blank">
-            {item.name}
+          <a href={item.data.url} target="_blank">
+            {item.data.title}
           </a>
         </div>
         <div style={{ width: '10%' }}>{item.path}</div>
@@ -57,7 +56,7 @@ class App extends Component {
 
     this.state = {
       result: null,
-      searchTerm: DEFAULT_QUERY,
+      searchTerm: DEFAULT_SUBREDDIT,
     }
   }
 
@@ -65,14 +64,15 @@ class App extends Component {
     this.setState({ searchTerm: e.target.value })
   }
 
-  onSearchSubmit = () => {
+  onSearchSubmit = event => {
     const { searchTerm } = this.state
     this.fetchSearchSubreddits(searchTerm)
+    event.preventDefault()
   }
 
   onDismiss = id => {
     const { result } = this.state
-    const updatedList = result.filter(item => item.name !== id)
+    const updatedList = result.filter(item => item.id !== id)
 
     this.setState({
       result: updatedList,
@@ -80,15 +80,15 @@ class App extends Component {
   }
 
   setSearchSubreddits = result => {
-    this.setState({ result })
-    console.log(result)
+    this.setState({ result: result.data.children })
+    console.log(result.data.children)
   }
 
   fetchSearchSubreddits = searchTerm => {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+    fetch(`${PATH_BASE}${searchTerm}${PATH_FORMAT}`)
       .then(response => response.json())
       .then(result => {
-        console.log(result.data)
+        console.log(result.data.children)
         return this.setSearchSubreddits(result)
       })
       .catch(e => e)
