@@ -57,6 +57,7 @@ class App extends Component {
     this.state = {
       result: null,
       searchTerm: DEFAULT_SUBREDDIT,
+      error: null,
     }
   }
 
@@ -91,7 +92,7 @@ class App extends Component {
         console.log(result.data.children)
         return this.setSearchSubreddits(result)
       })
-      .catch(e => e)
+      .catch(e => this.setState({ error: e }))
   }
 
   componentDidMount() {
@@ -101,11 +102,7 @@ class App extends Component {
   }
 
   render() {
-    const { result, searchTerm } = this.state
-
-    if (!result) {
-      return null
-    }
+    const { result, searchTerm, error } = this.state
 
     return (
       <div className="page">
@@ -119,7 +116,14 @@ class App extends Component {
             Search
           </Search>
         </div>
-        {result && <Table list={result} onDismiss={this.onDismiss} />}
+        {error ? (
+          <div className="interactions">
+            <p>Something went wrong.</p>
+            <p>Try using a different search key.</p>
+          </div>
+        ) : (
+          result && <Table list={result} onDismiss={this.onDismiss} />
+        )}
       </div>
     )
   }
