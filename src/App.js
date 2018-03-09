@@ -36,10 +36,11 @@ const Table = ({ list, onDismiss }) => (
             {item.data.title}
           </a>
         </div>
-        <div style={{ width: '10%' }}>{item.path}</div>
+        <div style={{ width: '20%' }}>{item.data.author}</div>
+        <div style={{ width: '10%' }}>{item.data.subreddit}</div>
         <div style={{ width: '10%' }}>
           <Button
-            onClick={() => onDismiss(item.name)}
+            onClick={() => onDismiss(item.data.id)}
             className="button-inline"
           >
             Dismiss
@@ -68,12 +69,13 @@ class App extends Component {
   onSearchSubmit = event => {
     const { searchTerm } = this.state
     this.fetchSearchSubreddits(searchTerm)
+    this.setState({ error: null })
     event.preventDefault()
   }
 
   onDismiss = id => {
     const { result } = this.state
-    const updatedList = result.filter(item => item.id !== id)
+    const updatedList = result.filter(item => item.data.id !== id)
 
     this.setState({
       result: updatedList,
