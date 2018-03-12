@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fetch from 'isomorphic-fetch'
 import './App.css'
 
 const PATH_BASE = 'http://www.reddit.com/r/'
@@ -91,7 +92,6 @@ class App extends Component {
     fetch(`${PATH_BASE}${searchTerm}${PATH_FORMAT}`)
       .then(response => response.json())
       .then(result => {
-        console.log(result.data.children)
         return this.setSearchSubreddits(result)
       })
       .catch(e => this.setState({ error: e }))
@@ -100,7 +100,6 @@ class App extends Component {
   componentDidMount() {
     const { searchTerm } = this.state
     this.fetchSearchSubreddits(searchTerm)
-    console.log(searchTerm)
   }
 
   render() {
@@ -132,3 +131,5 @@ class App extends Component {
 }
 
 export default App
+
+export { Button, Search, Table }
