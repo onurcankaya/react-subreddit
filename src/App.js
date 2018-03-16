@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import fetch from 'isomorphic-fetch'
 import './App.css'
 
@@ -22,11 +23,29 @@ const Search = ({ value, onChange, children, placeholder, onSearchSubmit }) => (
   </form>
 )
 
-const Button = ({ onClick, children, className = '' }) => (
+Search.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  onSearchSubmit: PropTypes.func.isRequired,
+}
+
+const Button = ({ onClick, children, className }) => (
   <button type="button" className={className} onClick={onClick}>
     {children}
   </button>
 )
+
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  className: PropTypes.string,
+}
+
+Button.defaultProps = {
+  className: '',
+}
 
 const Table = ({ list, onDismiss }) => (
   <div className="table">
@@ -51,6 +70,11 @@ const Table = ({ list, onDismiss }) => (
     ))}
   </div>
 )
+
+Table.propTypes = {
+  list: PropTypes.array.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+}
 
 class App extends Component {
   constructor(props) {
